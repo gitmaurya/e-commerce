@@ -120,7 +120,7 @@ export default function ProductDetail({ item }) {
           </div>
         </div>
       ) : (
-        <img src={item.thumbnail} alt="error" id="detailAddedImage" />
+        <img src={item.images} alt="error" id="detailAddedImage" />
       )}
       {/* right side  */}
 
@@ -145,15 +145,7 @@ export default function ProductDetail({ item }) {
             Category:<span className="text-success">{item.category}</span>
           </span>
         </div>
-        <div className="d-flex flex-column gap-3">
-          <span className="text-danger">
-            {" "}
-            Stocks:
-            <span className="text-success">{item.stock ? item.stock : ""}</span>
-          </span>
-          <span>{item.description}</span>
-        </div>
-
+    
         <div className="align-self-end">
           <button
             type="button"

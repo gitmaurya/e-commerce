@@ -33,7 +33,7 @@ export default function Cart({ item }) {
       <div className="d-flex container-sm p-1 bg-white  gap-5">
         {/* left part  */}
         <img
-          src={item.thumbnail}
+          src={item.images}
           alt="error"
           id="card-image "
           style={{ width: "50%", height: "17rem", objectFit: "cover" }}

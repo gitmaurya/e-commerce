@@ -44,7 +44,7 @@ export default function ProductItem({ item }) {
   }
   // making delete request
   function handleDelelteProduct(item) {
-    let url = ` https://my-json-server.typicode.com/${item.id}`;
+    let url = ` https://my-json-server.typicode.com/gitmaurya/e-comRepo/products/${item.id}`;
     let result = customFetch(url, { method: "DELETE" });
 
     let index = products.indexOf(item);
@@ -59,38 +59,52 @@ export default function ProductItem({ item }) {
   }
   // making put request after click on save button of edit
   function handleSave(item) {
-    let url = ` https://my-json-server.typicode.com/${item.id}`;
-    let result = customFetch(url, {
-      body: {
-        ...item,
-        title,
-        price,
-        // rating,
-        description,
-        edit: true,
-      },
+    let url = `https://my-json-server.typicode.com/gitmaurya/e-comRepo/products/${item.id}`;
+  
+    // Constructing the updated item object with changes
+    const updatedItem = {
+      ...item,
+      title: item.title, // Assuming title is being updated
+      price: item.price, // Assuming price is being updated
+      // rating: item.rating, // Uncomment if rating is being updated
+      description: item.description, // Assuming description is being updated
+      edit: true,
+    };
+  
+    // Making the PUT request using customFetch
+    customFetch(url, {
       method: "PUT",
-    });
-    result.then((data) => {
-      let index = products.indexOf(item);
-      products[index] = data;
-
-      dispatchProduct(addproducts([...products]));
-      showToastMessage("Edit suceesful", "success");
-    });
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(updatedItem),
+    })
+      .then((data) => {
+        // Update the product in the local state or Redux store
+        const updatedProducts = products.map((p) =>
+          p.id === data.id ? data : p
+        );
+        dispatchProduct(addproducts(updatedProducts));
+        showToastMessage("Edit successful", "success");
+      })
+      .catch((error) => {
+        console.error("Error editing product:", error);
+        showToastMessage("Error editing product", "error");
+      });
   }
+  
   return (
     //   container
     <div className="d-flex container-sm bg-white px-1 py-5 mt-4 flex-column flex-lg-row gap-3">
       {/* left section  */}
       <ToastContainer />
       <div className="d-flex container-sm gap-5">
-        <img
-          src={item.thumbnail}
-          alt=""
-          width={"200rem"}
-          onClick={() => handleClick(item)}
-        />
+      <img
+        src={item.images[0]}
+        alt={item.title} // Provide meaningful alt text
+        style={{ width: '200px', height: 'auto' }} // Adjust width and maintain aspect ratio
+        onClick={() => handleClick(item)}
+      />
         {/* right-part Content  */}
         <div className="d-flex flex-column gap-2">
           {item.edit ? (

@@ -1,13 +1,13 @@
-import React from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
-import { useState } from "react";
-import customFetch from "../apiCall";
-import { addproducts } from "../actions";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { showToastMessage } from "../Notification/notify";
+import { addproducts } from "../actions";
+import customFetch from "../apiCall";
+
 const Container = styled.div`
   width: 50%;
   margin: auto;
@@ -24,81 +24,103 @@ export default function AddProduct() {
   const products = useSelector((state) => state.products);
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const [name, setname] = useState("");
-  const [description, setdescription] = useState("");
-  const [price, setprice] = useState("");
-  const [category, setcategory] = useState("");
-  const [thumbnail, setthumbmail] = useState("");
-  const [rating, setrating] = useState("");
+  
+  // State variables for form inputs
+  const [name, setName] = useState("");
+  const [description, setDescription] = useState("");
+  const [price, setPrice] = useState("");
+  const [category, setCategory] = useState("");
+  const [images, setImages] = useState("");
 
-  let url = " https://my-json-server.typicode.com/";
+  // URL for API endpoint
+  const url = "https://my-json-server.typicode.com/gitmaurya/e-comRepo/products";
+
   function handleSubmit(e) {
     e.preventDefault();
-    let result = customFetch(url, {
-      body: {
-        id: Date.now(),
-        title: name,
-        price,
-        category,
-        thumbnail,
-        rating,
-        description,
-        edit: true,
-      },
+
+    // Constructing the body object to send in the POST request
+    const requestData = {
+      id: Date.now(),
+      title: name,
+      price: parseFloat(price), // Assuming price is numeric
+      category,
+      images: [images], // Assuming images is a single URL for now
+      description,
+      edit: true,
+    };
+
+    // Making the POST request using customFetch
+    customFetch(url, {
       method: "POST",
-    });
-    result.then((data) => {
-      dispatch(addproducts([data, ...products]));
-      navigate("/");
-    });
-    showToastMessage("Product Added Successful", "success");
-    setname("");
-    setcategory("");
-    setdescription("");
-    setrating("");
-    setthumbmail("");
-    setprice("");
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(requestData),
+    })
+      .then((data) => {
+        // Dispatch action to update Redux store with new product
+        dispatch(addproducts([data, ...products]));
+        // Navigate to home page or success page
+        navigate("/");
+        // Show toast message for success
+        showToastMessage("Product Added Successfully", "success");
+        // Clear form inputs
+        setName("");
+        setDescription("");
+        setPrice("");
+        setCategory("");
+        setImages("");
+      })
+      .catch((error) => {
+        console.error("Error adding product:", error);
+        // Show toast message for error
+        showToastMessage("Error Adding Product", "error");
+      });
   }
+
   return (
-    // container
-    <Container className="bg-light border border-1 border-dark mt-4 p-3 ">
+    <Container className="bg-light border border-1 border-dark mt-4 p-3">
       <ToastContainer />
       <form className="d-flex flex-column gap-3" onSubmit={handleSubmit}>
         <input
           type="text"
           className="p-2"
           placeholder="Name"
-          onChange={(e) => setname(e.target.value)}
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          required
         />
         <input
           type="text"
           className="p-2"
-          placeholder="Descriptions"
-          onChange={(e) => setdescription(e.target.value)}
+          placeholder="Description"
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
+          required
         />
         <input
           type="text"
           className="p-2"
           placeholder="Price"
-          onChange={(e) => setprice(e.target.value)}
+          value={price}
+          onChange={(e) => setPrice(e.target.value)}
+          required
         />
         <input
           type="text"
           className="p-2"
-          placeholder="category"
-          onChange={(e) => setcategory(e.target.value)}
+          placeholder="Category"
+          value={category}
+          onChange={(e) => setCategory(e.target.value)}
+          required
         />
         <input
           type="text"
           className="p-2"
-          placeholder="Thumbnail image Url"
-          onChange={(e) => setthumbmail(e.target.value)}
-        />
-        <input
-          type="text"
-          className="p-2"
-          placeholder="ratings"
-          onChange={(e) => setrating(e.target.value)}
+          placeholder="Thumbnail Image URL"
+          value={images}
+          onChange={(e) => setImages(e.target.value)}
+          required
         />
         <button
           type="submit"
@@ -108,7 +130,7 @@ export default function AddProduct() {
             backgroundColor: "var(--nav)",
           }}
         >
-          Add to Cart
+          Add Product
         </button>
       </form>
     </Container>

@@ -1,59 +1,43 @@
-
-import Nav from "./Component/Nav";
-import ProductDetail from "./Component/ProductDetail";
-import AddProduct from "./Component/AddProduct";
-import CartItems from "./Component/CartItems";
-import ProductItemList from "./Component/ProductItemList";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { useSelector, useDispatch } from "react-redux";
-import { addproducts } from "./actions/index";
-
-import { useEffect, useState } from "react";
+import React, { useEffect } from 'react';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { useSelector, useDispatch } from 'react-redux';
+import Nav from './Component/Nav';
+import ProductDetail from './Component/ProductDetail';
+import AddProduct from './Component/AddProduct';
+import CartItems from './Component/CartItems';
+import ProductItemList from './Component/ProductItemList';
+import { addproducts } from './actions/index';
+import customFetch from './apiCall';
 
 function App() {
-  let productDetailItem = useSelector((state) => state.itemToDisplay);
+  // Get product detail item from Redux state
+  const productDetailItem = useSelector((state) => state.itemToDisplay);
 
-  const url = " https://my-json-server.typicode.com/gitmaurya/e-commerce";
+  // Define the URL for fetching data
+  const url = "https://my-json-server.typicode.com/gitmaurya/e-comRepo/db";
 
-  // const dispatch = useDispatch();
+  // Get the dispatch function from Redux
+  const dispatch = useDispatch();
 
-  // const [data, setData] = useState([]);
-  // const [loading, setLoading] = useState(true);
-  // const [error, setError] = useState(null);
- 
-  // useEffect(() => {
-  //   // Define the async function inside useEffect
-  //   const fetchData = async () => {
-  //     try {
-  //       const response = await fetch('https://jsonplaceholder.typicode.com/todos');
-  //       const result = await response.json();
-  //       setData(result);
-  //       console.log(data)
-  //     } catch (error) {
-  //       setError(error);
-  //     } finally {
-  //       setLoading(false);
-  //     }
-      
-  //   };
-    
-  //   // Call the async function
-  //   fetchData();
-  // }, []);
-   
-    let response = customFetch(url, {
-      method: "GET",
-    });
-    response.then((data) => {
-      let modifiedData = data.products.map((item) => {
-        item.edit = true;
-        return item;
-      });
-      window.localStorage.setItem("products", JSON.stringify(modifiedData));
-      let products = JSON.parse(window.localStorage.getItem("products"));
-      dispatch(addproducts(products));
-    });
- 
+  // Fetch data and update Redux store and localStorage
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await customFetch(url, { method: 'GET' });
+        const modifiedData = response.products.map((item) => {
+          item.edit = true;
+          return item;
+        });
+        window.localStorage.setItem('products', JSON.stringify(modifiedData));
+        const products = JSON.parse(window.localStorage.getItem('products'));
+        dispatch(addproducts(products));
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
+
+    fetchData();
+  }, [dispatch, url]);
 
   return (
     <div className="App">

@@ -5,7 +5,7 @@ import Sort from "./Sort";
 
 export default function ProductItemList({}) {
   const data = useSelector((state) => state.products);
-  // console.log(data);
+
   if (data.length === 0) {
     return (
       <div className="d-flex justify-content-center mt-5">
