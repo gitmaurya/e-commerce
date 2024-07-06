@@ -13,46 +13,46 @@ import { useEffect, useState } from "react";
 function App() {
   let productDetailItem = useSelector((state) => state.itemToDisplay);
 
-  const url = " https://my-json-server.typicode.com/";
+  const url = " https://my-json-server.typicode.com/gitmaurya/e-commerce";
 
-  const dispatch = useDispatch();
+  // const dispatch = useDispatch();
 
-  const [data, setData] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  // const [data, setData] = useState([]);
+  // const [loading, setLoading] = useState(true);
+  // const [error, setError] = useState(null);
  
-  useEffect(() => {
-    // Define the async function inside useEffect
-    const fetchData = async () => {
-      try {
-        const response = await fetch('https://jsonplaceholder.typicode.com/todos');
-        const result = await response.json();
-        setData(result);
-        console.log(data)
-      } catch (error) {
-        setError(error);
-      } finally {
-        setLoading(false);
-      }
+  // useEffect(() => {
+  //   // Define the async function inside useEffect
+  //   const fetchData = async () => {
+  //     try {
+  //       const response = await fetch('https://jsonplaceholder.typicode.com/todos');
+  //       const result = await response.json();
+  //       setData(result);
+  //       console.log(data)
+  //     } catch (error) {
+  //       setError(error);
+  //     } finally {
+  //       setLoading(false);
+  //     }
       
-    };
+  //   };
     
-    // Call the async function
-    fetchData();
-  }, []);
+  //   // Call the async function
+  //   fetchData();
+  // }, []);
    
-    // let response = customFetch(url, {
-    //   method: "GET",
-    // });
-    // response.then((data) => {
-    //   let modifiedData = data.products.map((item) => {
-    //     item.edit = true;
-    //     return item;
-    //   });
-    //   window.localStorage.setItem("products", JSON.stringify(modifiedData));
-    //   let products = JSON.parse(window.localStorage.getItem("products"));
-    //   dispatch(addproducts(products));
-    // });
+    let response = customFetch(url, {
+      method: "GET",
+    });
+    response.then((data) => {
+      let modifiedData = data.products.map((item) => {
+        item.edit = true;
+        return item;
+      });
+      window.localStorage.setItem("products", JSON.stringify(modifiedData));
+      let products = JSON.parse(window.localStorage.getItem("products"));
+      dispatch(addproducts(products));
+    });
  
 
   return (
